@@ -68,11 +68,77 @@ int main(int argc, char **argv) {
 /* Task 3 */
 void readDictionary(char *dictName) {
   // -- TODO --
-  fprintf(stderr, "You need to implement readDictionary\n");
+  int len = 1000000;
+  FILE *fp = fopen(dictName,"r");
+  while(1) {
+	  char *key = (char*)malloc(sizeof(char) * len);
+	  char *data = (char*)malloc(sizeof(char) * len);
+	  if (fscanf(fp, "%s%s", key, data) == EOF) {
+		  break;
+	  }
+	  insertData(dictionary, key, data);
+	  //free(key);
+	  //free(data);
+  }
+  fclose(fp);
+  //fprintf(stderr, "You need to implement readDictionary\n");
 }
 
 /* Task 4 */
 void processInput() {
   // -- TODO --
-  fprintf(stderr, "You need to implement processInput\n");
+  int len = 1000000;
+  char *chars = (char*)malloc(sizeof(char) * len);
+  int c;
+  int pos = 0;
+  while((c = getchar()) != EOF || strlen(chars) != 0) {
+  //while ((c = getchar()) != EOF) {
+  //char *chars = (char*)malloc(sizeof(char) * len);
+	  if (isalpha(c) || isdigit(c)) {
+		  *(chars + pos) = c;
+		  pos++;
+		  continue;
+	  }
+	  //putchar(c);
+	  *(chars + pos) = '\0';
+	  pos = 0;
+	  char *cp_chars = (char*)malloc(sizeof(char) * len);
+	  strcpy(cp_chars, chars);
+	  
+	  char *dict_data = findData(dictionary, chars);
+	  if (dict_data != NULL) {
+		  processOutput(dict_data, c, chars, cp_chars);
+		  continue;
+	  }
+	  
+	  int i;
+	  for (i = 1; i < strlen(chars); i++) {
+		  *(chars + i) = tolower(*(chars + i));
+	  }
+	  dict_data = findData(dictionary, chars);
+	  if (dict_data != NULL) {
+		  processOutput(dict_data, c, chars, cp_chars);
+		  continue;
+	  }
+
+	 *(chars) = tolower(*(chars));
+	  dict_data = findData(dictionary, chars);
+	  if (dict_data != NULL) {
+		  processOutput(dict_data, c, chars, cp_chars);
+		  continue;
+	  }
+	  processOutput(cp_chars, c, chars, cp_chars);
+  }
+  free(chars);
+  //fprintf(stderr, "You need to implement processInput\n");
+}
+
+void processOutput(char *dict_data, int c, char *chars, char *cp_chars) {
+	printf("%s", dict_data);
+	if (c != EOF) {
+		printf("%c", c);
+	}
+	//printf("%s%c", dict_data, c);
+	memset(chars, 0, sizeof(chars));
+	free(cp_chars);
 }
